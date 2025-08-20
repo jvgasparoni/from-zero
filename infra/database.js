@@ -7,7 +7,12 @@ async function query(queryObject) {
     user: process.env.POSTGRES_USER,
     database: process.env.POSTGRES_DB,
     password: process.env.POSTGRES_PASSWORD,
+    ssl: {
+      rejectUnauthorized: true,
+      ca: process.env.POSTGRES_SSL_CA, // <- CA que você colou na Vercel
+    },
   });
+
   console.log("Credenciais do Postgres:", {
     host: process.env.POSTGRES_HOST,
     port: process.env.POSTGRES_PORT,
