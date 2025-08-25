@@ -3,21 +3,21 @@ import { Client } from "pg";
 async function query(queryObject) {
   const client = new Client({
     host: process.env.POSTGRES_HOST,
-    port: Number(process.env.POSTGRES_PORT),
+    port: process.env.POSTGRES_PORT,
     user: process.env.POSTGRES_USER,
     database: process.env.POSTGRES_DB,
     password: process.env.POSTGRES_PASSWORD,
-    ssl:
-      process.env.NODE_ENV === "development"
-        ? false
-        : {
-            rejectUnauthorized: true,
-            ca: process.env.POSTGRES_SSL_CA,
-          },
+    ssl: getSSLValues(),
   });
 
-  // log seguro para ver qual host está indo:
-  console.log("DB host:", client.host, "port:", client.port);
+  console.log({
+    host: process.env.POSTGRES_HOST,
+    port: process.env.POSTGRES_PORT,
+    user: process.env.POSTGRES_USER,
+    database: process.env.POSTGRES_DB,
+    password: process.env.POSTGRES_PASSWORD,
+    ssl: getSSLValues(),
+  });
 
   try {
     await client.connect();
@@ -34,3 +34,13 @@ async function query(queryObject) {
 export default {
   query: query,
 };
+
+function getSSLValues() {
+  if (process.env.POSTGRES_CA) {
+    return {
+      ca: process.env.POSTGRES_CA,
+    };
+  }
+
+  return process.env.NODE_ENV === "production" ? true : false;
+}
