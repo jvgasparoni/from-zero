@@ -19,7 +19,8 @@ async function waitForAllServices() {
   }
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default {
+const orchestrator = {
   waitForAllServices,
 };
+
+export default orchestrator;
