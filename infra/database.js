@@ -28,11 +28,12 @@ async function getNewClient() {
   return client;
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default {
+const database = {
   query,
   getNewClient,
 };
+
+export default database;
 
 function getSSLValues() {
   if (process.env.POSTGRES_CA) {
