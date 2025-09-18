@@ -4,8 +4,10 @@
   "description": "Beginning my coding journey from scratch. All my early projects live here.",
   "main": "index.js",
   "scripts": {
+    "predev": "npm run lint:prettier:check && npm run lint:eslint:check",
     "dev": "npm run services:up && npm run services:wait:database && npm run migrations:up && next dev",
     "test": "npm run services:up && concurrently -n next,jest --hide next -k -s command-jest \"cross-env TURBOPACK=1 next dev\" \"cross-env NODE_ENV=test jest --runInBand --verbose\"",
+    "posttest": "npm run services:stop",
     "test:watch": "jest --watchAll --runInBand",
     "services:up": "docker compose -f infra/compose.yaml up -d",
     "services:down": "docker compose -f infra/compose.yaml down",
