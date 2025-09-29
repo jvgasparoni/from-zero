@@ -53,7 +53,7 @@ const config = [
 
   // ✅ ESM específico do infra (ex.: infra/database.js usa "import")
   {
-    files: ["infra/database.js", "infra/**/*.mjs"],
+    files: ["infra/database.js", "infra/controller.js", "infra/**/*.mjs"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module",
