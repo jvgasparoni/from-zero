@@ -27,7 +27,7 @@ function UpdatedAt() {
     updatedAtText = new Date(data.updated_at).toLocaleString("pt-BR");
   }
 
-  return <div> Última atualização: {updatedAtText}</div>;
+  return <div>Última atualização: {updatedAtText}</div>;
 }
 
 function DatabaseStatus() {
@@ -42,10 +42,10 @@ function DatabaseStatus() {
       <>
         <div>Versão: {data.dependencies.database.version}</div>
         <div>
-          Conexões máximas: {data.dependencies.database.max_connections}
+          Conexões abertas: {data.dependencies.database.opened_connections}
         </div>
         <div>
-          Conexões abertas: {data.dependencies.database.opened_connections}
+          Conexões máximas: {data.dependencies.database.max_connections}
         </div>
       </>
     );
