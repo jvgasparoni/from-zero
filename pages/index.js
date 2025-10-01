@@ -1,11 +1,5 @@
 function Home() {
-  return (
-    <h1>
-      {" "}
-      Este é um teste/exemplo, estou fazendo um curso novo :). me avise que você
-      leu.
-    </h1>
-  );
+  return <h1>Renata, eu amo você. Se você me ama, dá uma risadinha! 😎</h1>;
 }
 
 export default Home;

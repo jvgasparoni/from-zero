@@ -1,3 +1,3 @@
-# from-zero
+# clone-tabnews
 
-Beginning my coding journey from scratch. All my early projects live here.
+Implementação do https://www.tabnews.com.br para o https://curso.dev
