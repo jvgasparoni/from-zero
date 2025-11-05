@@ -37,6 +37,7 @@ export class ServiceError extends Error {
     };
   }
 }
+
 export class ValidationError extends Error {
   constructor({ cause, message, action }) {
     super(message || "Um erro de validação ocorreu.", {
@@ -56,14 +57,35 @@ export class ValidationError extends Error {
     };
   }
 }
+
 export class NotFoundError extends Error {
   constructor({ cause, message, action }) {
-    super(message || "Não foi possível encontrar o recurso solicitado.", {
+    super(message || "Não foi possível encontrar este recurso no sistema.", {
       cause,
     });
     this.name = "NotFoundError";
-    this.action = action || "Verifique se o recurso solicitado existe.";
+    this.action =
+      action || "Verifique se os parâmetros enviados na consulta estão certos.";
     this.statusCode = 404;
+  }
+
+  toJSON() {
+    return {
+      name: this.name,
+      message: this.message,
+      action: this.action,
+      status_code: this.statusCode,
+    };
+  }
+}
+export class UnauthorizedError extends Error {
+  constructor({ cause, message, action }) {
+    super(message || "Usuário não autenticado.", {
+      cause,
+    });
+    this.name = "UnauthorizedError";
+    this.action = action || "Faça novamente o login para continuar.";
+    this.statusCode = 401;
   }
 
   toJSON() {
