@@ -1,6 +1,6 @@
 import database from "infra/database.js";
-import { NotFoundError, ValidationError } from "infra/errors.js";
 import password from "models/password.js";
+import { ValidationError, NotFoundError } from "infra/errors.js";
 
 async function findOneByUsername(username) {
   const userFound = await runSelectQuery(username);
@@ -16,15 +16,47 @@ async function findOneByUsername(username) {
           users
         WHERE
           LOWER(username) = LOWER($1)
-        LIMIT 
+        LIMIT
           1
         ;`,
       values: [username],
     });
+
     if (results.rowCount === 0) {
       throw new NotFoundError({
         message: "O username informado não foi encontrado no sistema.",
         action: "Verifique se o username está digitado corretamente.",
+      });
+    }
+
+    return results.rows[0];
+  }
+}
+
+async function findOneByEmail(email) {
+  const userFound = await runSelectQuery(email);
+
+  return userFound;
+
+  async function runSelectQuery(email) {
+    const results = await database.query({
+      text: `
+        SELECT
+          *
+        FROM
+          users
+        WHERE
+          LOWER(email) = LOWER($1)
+        LIMIT
+          1
+        ;`,
+      values: [email],
+    });
+
+    if (results.rowCount === 0) {
+      throw new NotFoundError({
+        message: "O email informado não foi encontrado no sistema.",
+        action: "Verifique se o email está digitado corretamente.",
       });
     }
 
@@ -37,17 +69,18 @@ async function create(userInputValues) {
   await validateUniqueEmail(userInputValues.email);
   await hashPasswordInObject(userInputValues);
 
-  const newUser = await runInsertUserQuery(userInputValues);
+  const newUser = await runInsertQuery(userInputValues);
   return newUser;
 
-  async function runInsertUserQuery(userInputValues) {
+  async function runInsertQuery(userInputValues) {
     const results = await database.query({
       text: `
-        INSERT INTO 
+        INSERT INTO
           users (username, email, password)
-         VALUES ($1, $2, $3)
+        VALUES
+          ($1, $2, $3)
         RETURNING
-           *
+          *
         ;`,
       values: [
         userInputValues.username,
@@ -76,23 +109,23 @@ async function update(username, userInputValues) {
 
   const userWithNewValues = { ...currentUser, ...userInputValues };
 
-  const updatedUser = await runUpdateUserQuery(userWithNewValues);
+  const updatedUser = await runUpdateQuery(userWithNewValues);
   return updatedUser;
 
-  async function runUpdateUserQuery(userWithNewValues) {
+  async function runUpdateQuery(userWithNewValues) {
     const results = await database.query({
       text: `
-      UPDATE
-        users
-      SET
-        username = $2,
-        email = $3,
-        password = $4,
-        updated_at = timezone('utc', now())
-      WHERE
-        id = $1
-      RETURNING
-        *
+        UPDATE
+          users
+        SET
+          username = $2,
+          email = $3,
+          password = $4,
+          updated_at = timezone('utc', now())
+        WHERE
+          id = $1
+        RETURNING
+          *
       `,
       values: [
         userWithNewValues.id,
@@ -105,18 +138,20 @@ async function update(username, userInputValues) {
     return results.rows[0];
   }
 }
+
 async function validateUniqueUsername(username) {
   const results = await database.query({
     text: `
-        SELECT
-          username
-        FROM
-          users
-        WHERE
-          LOWER(username) = LOWER($1)
-        ;`,
+      SELECT
+        username
+      FROM
+        users
+      WHERE
+        LOWER(username) = LOWER($1)
+      ;`,
     values: [username],
   });
+
   if (results.rowCount > 0) {
     throw new ValidationError({
       message: "O username informado já está sendo utilizado.",
@@ -128,15 +163,16 @@ async function validateUniqueUsername(username) {
 async function validateUniqueEmail(email) {
   const results = await database.query({
     text: `
-        SELECT
-          email
-        FROM
-          users
-        WHERE
-          LOWER(email) = LOWER($1)
-        ;`,
+      SELECT
+        email
+      FROM
+        users
+      WHERE
+        LOWER(email) = LOWER($1)
+      ;`,
     values: [email],
   });
+
   if (results.rowCount > 0) {
     throw new ValidationError({
       message: "O email informado já está sendo utilizado.",
@@ -153,6 +189,7 @@ async function hashPasswordInObject(userInputValues) {
 const user = {
   create,
   findOneByUsername,
+  findOneByEmail,
   update,
 };
 
